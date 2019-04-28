@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package http;
+
+option go_package = "v1";
+
+message PushMsgReq {
+  string username = 1;
+  string content = 2;
+  string code =3;
+}
+
+message PushMsgReply {
+    string msg =1;
+}
+
+service SagaAdmin {
+  rpc PushMsg(PushMsgReq) returns(PushMsgReply);
+}

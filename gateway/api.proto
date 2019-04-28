@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package http;
+option go_package = "v1";
+import "google/api/annotations.proto";
+
+message PushMsgReq {
+  string username = 1;
+  string content = 2;
+  string code =3;
+}
+
+message PushMsgReply {
+    string msg =1;
+}
+
+service SagaAdmin {
+  rpc PushMsg(PushMsgReq) returns(PushMsgReply){
+    option (google.api.http) = { post: "/v1/hello"
+      body: "*" };
+  }
+}
