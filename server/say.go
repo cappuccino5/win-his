@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"github.com/micro/go-grpc"
 	"github.com/micro/go-micro"
 	"log"
@@ -25,7 +24,6 @@ func init() {
 }
 func (s *Say) PushMsg(ctx context.Context, req *hello.PushMsgReq, rsp *hello.PushMsgReply) error {
 	log.Print("http.SagaAdmin.Hello request")
-	fmt.Println(ctx.Done())
 	rsp.Msg = "Hello " + req.Username
 	return nil
 }
