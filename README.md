@@ -40,15 +40,15 @@ win-his/gateway/*.proto:
 ```
 start:
  启动consul:
-	consul agent -dev
+    consul agent -dev
  micro默认支持consul：
-	go run main.go
+    go run main.go
  查看启动的微服务：
     micro list services
  也可以注册服务到consul并指定端口:
-	go run main.go  --registry=consul --server_address=localhost:9000
+    go run main.go  --registry=consul --server_address=localhost:9000
  服务注册到consul的前提下，使用游览器可以查看到consul中服务:
- http://127.0.0.1:8500
+     http://127.0.0.1:8500
 ```
 
 # END
