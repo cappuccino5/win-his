@@ -14,15 +14,18 @@ win-his
 │   │	README
 
 ```
-这是一个micro 服务测试用例:
+# 这是一个micro 服务测试用例
+```
+
 一、编译*.proto,生成micro
 win-his/api/*.proto:
 	protoc --go_out=plugins=grpc:. *.proto
 
 生成micro,**.micro.go
 	protoc  --proto_path=. --micro_out=. --go_out=. *.proto
- 
-二、编译*.proto,生成gateway
+```
+# 二、编译*.proto,生成gateway
+```
 win-his/gateway/*.proto:
  生成 *.pb.go
 	protoc -IC:/Go/pkg/protoc-3.7.1-win64/include/ -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go_out=plugins=grpc:. *.proto
@@ -32,9 +35,10 @@ win-his/gateway/*.proto:
 
  生成 .swagger.json
 	protoc -IC:/Go/pkg/protoc-3.7.1-win64/include/ -I. -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. *.proto
-
-三、运行测试用例:
-start:	
+```
+# 三、运行测试用例:
+```
+start:
  启动consul:
 	consul agent -dev
  micro默认支持consul：
@@ -45,9 +49,10 @@ start:
 	go run main.go  --registry=consul --server_address=localhost:9000
  注册服务的前提下，使用游览器查看consul中服务:
  http://127.0.0.1:8500
+```
 
-
-END:
+# END
+```
 测试done时出现以下情况,附解决方法
 1、// go run main.go ： const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
  谢谢@lenvs给了我灵感！我也解决了这个问题！
@@ -58,4 +63,6 @@ git clone https://github.com/golang/protobuf.git
 go install
 2、生成gw包的时候需要加路径依赖:
 	a. -I 需要protoc的 include/
-	b. -I 需要github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis 依赖;
+	b. -I 需要github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis 依赖
+
+```
