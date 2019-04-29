@@ -47,7 +47,7 @@ start:
     micro list services
  也可以注册服务到consul并指定端口:
 	go run main.go  --registry=consul --server_address=localhost:9000
- 注册服务的前提下，使用游览器查看consul中服务:
+ 服务注册到consul的前提下，使用游览器可以查看到consul中服务:
  http://127.0.0.1:8500
 ```
 
