@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package http;
-
 option go_package = "v1";
 
 message PushMsgReq {
@@ -13,7 +11,13 @@ message PushMsgReq {
 message PushMsgReply {
     string msg =1;
 }
-
-service SagaAdmin {
+message Request {
+    string username=1;
+}
+message Response {
+    string msg=1;
+}
+service Admin {
   rpc PushMsg(PushMsgReq) returns(PushMsgReply);
+  rpc TakeWorking(Request)returns(Response);
 }

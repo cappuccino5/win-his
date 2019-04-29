@@ -28,7 +28,7 @@ var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
-func request_SagaAdmin_PushMsg_0(ctx context.Context, marshaler runtime.Marshaler, client SagaAdminClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Admin_PushMsg_0(ctx context.Context, marshaler runtime.Marshaler, client AdminClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq PushMsgReq
 	var metadata runtime.ServerMetadata
 
@@ -45,9 +45,26 @@ func request_SagaAdmin_PushMsg_0(ctx context.Context, marshaler runtime.Marshale
 
 }
 
-// RegisterSagaAdminHandlerFromEndpoint is same as RegisterSagaAdminHandler but
+func request_Admin_TakeWorking_0(ctx context.Context, marshaler runtime.Marshaler, client AdminClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq Request
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.TakeWorking(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+// RegisterAdminHandlerFromEndpoint is same as RegisterAdminHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterSagaAdminHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterAdminHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
@@ -67,23 +84,23 @@ func RegisterSagaAdminHandlerFromEndpoint(ctx context.Context, mux *runtime.Serv
 		}()
 	}()
 
-	return RegisterSagaAdminHandler(ctx, mux, conn)
+	return RegisterAdminHandler(ctx, mux, conn)
 }
 
-// RegisterSagaAdminHandler registers the http handlers for service SagaAdmin to "mux".
+// RegisterAdminHandler registers the http handlers for service Admin to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterSagaAdminHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterSagaAdminHandlerClient(ctx, mux, NewSagaAdminClient(conn))
+func RegisterAdminHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterAdminHandlerClient(ctx, mux, NewAdminClient(conn))
 }
 
-// RegisterSagaAdminHandlerClient registers the http handlers for service SagaAdmin
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "SagaAdminClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "SagaAdminClient"
+// RegisterAdminHandlerClient registers the http handlers for service Admin
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "AdminClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "AdminClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "SagaAdminClient" to call the correct interceptors.
-func RegisterSagaAdminHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SagaAdminClient) error {
+// "AdminClient" to call the correct interceptors.
+func RegisterAdminHandlerClient(ctx context.Context, mux *runtime.ServeMux, client AdminClient) error {
 
-	mux.Handle("POST", pattern_SagaAdmin_PushMsg_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Admin_PushMsg_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -92,14 +109,34 @@ func RegisterSagaAdminHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_SagaAdmin_PushMsg_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Admin_PushMsg_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_SagaAdmin_PushMsg_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Admin_PushMsg_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_Admin_TakeWorking_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Admin_TakeWorking_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Admin_TakeWorking_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -107,9 +144,13 @@ func RegisterSagaAdminHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 }
 
 var (
-	pattern_SagaAdmin_PushMsg_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "hello"}, ""))
+	pattern_Admin_PushMsg_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "hello"}, ""))
+
+	pattern_Admin_TakeWorking_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v2", "hello"}, ""))
 )
 
 var (
-	forward_SagaAdmin_PushMsg_0 = runtime.ForwardResponseMessage
+	forward_Admin_PushMsg_0 = runtime.ForwardResponseMessage
+
+	forward_Admin_TakeWorking_0 = runtime.ForwardResponseMessage
 )

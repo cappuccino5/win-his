@@ -5,7 +5,7 @@ import (
 	"github.com/micro/go-grpc"
 	"github.com/micro/go-micro"
 	"log"
-	hello "win-his/api"
+	pb "win-his/api"
 )
 
 var Server micro.Service
@@ -20,18 +20,24 @@ func init() {
 		micro.Name(bus.Domain),
 	)
 	Server.Init()
-	hello.RegisterSagaAdminHandler(Server.Server(), bus)
+	pb.RegisterAdminHandler(Server.Server(), bus)
 }
-func (s *Say) PushMsg(ctx context.Context, req *hello.PushMsgReq, rsp *hello.PushMsgReply) error {
+func (s *Say) PushMsg(ctx context.Context, req *pb.PushMsgReq, rsp *pb.PushMsgReply) error {
 	log.Print("http.SagaAdmin.Hello request")
-	rsp.Msg = "Hello " + req.Username
+	rsp.Msg = "welcome to push msg " + req.Username
 	return nil
 }
 func newServer() *Say {
-	say := new(Say)
-	say.Domain = "http.SagaAdmin"
-	return say
+	return &Say{
+		Domain: "Admin",
+	}
 }
+func (s *Say) TakeWorking(ctx context.Context, req *pb.Request, resp *pb.Response) error {
+	log.Print("http.SagaAdmin.take request")
+	resp.Msg = "welcome to take working " + req.Username
+	return nil
+}
+
 func Run() error {
 	return Server.Run()
 }

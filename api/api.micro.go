@@ -31,32 +31,33 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for SagaAdmin service
+// Client API for Admin service
 
-type SagaAdminService interface {
+type AdminService interface {
 	PushMsg(ctx context.Context, in *PushMsgReq, opts ...client.CallOption) (*PushMsgReply, error)
+	TakeWorking(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
 }
 
-type sagaAdminService struct {
+type adminService struct {
 	c    client.Client
 	name string
 }
 
-func NewSagaAdminService(name string, c client.Client) SagaAdminService {
+func NewAdminService(name string, c client.Client) AdminService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "http"
+		name = "admin"
 	}
-	return &sagaAdminService{
+	return &adminService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *sagaAdminService) PushMsg(ctx context.Context, in *PushMsgReq, opts ...client.CallOption) (*PushMsgReply, error) {
-	req := c.c.NewRequest(c.name, "SagaAdmin.PushMsg", in)
+func (c *adminService) PushMsg(ctx context.Context, in *PushMsgReq, opts ...client.CallOption) (*PushMsgReply, error) {
+	req := c.c.NewRequest(c.name, "Admin.PushMsg", in)
 	out := new(PushMsgReply)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -65,27 +66,161 @@ func (c *sagaAdminService) PushMsg(ctx context.Context, in *PushMsgReq, opts ...
 	return out, nil
 }
 
-// Server API for SagaAdmin service
+func (c *adminService) TakeWorking(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Admin.TakeWorking", in)
+	out := new(Response)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type SagaAdminHandler interface {
+// Server API for Admin service
+
+type AdminHandler interface {
 	PushMsg(context.Context, *PushMsgReq, *PushMsgReply) error
+	TakeWorking(context.Context, *Request, *Response) error
 }
 
-func RegisterSagaAdminHandler(s server.Server, hdlr SagaAdminHandler, opts ...server.HandlerOption) error {
-	type sagaAdmin interface {
+func RegisterAdminHandler(s server.Server, hdlr AdminHandler, opts ...server.HandlerOption) error {
+	type admin interface {
 		PushMsg(ctx context.Context, in *PushMsgReq, out *PushMsgReply) error
+		TakeWorking(ctx context.Context, in *Request, out *Response) error
 	}
-	type SagaAdmin struct {
-		sagaAdmin
+	type Admin struct {
+		admin
 	}
-	h := &sagaAdminHandler{hdlr}
-	return s.Handle(s.NewHandler(&SagaAdmin{h}, opts...))
+	h := &adminHandler{hdlr}
+	return s.Handle(s.NewHandler(&Admin{h}, opts...))
 }
 
-type sagaAdminHandler struct {
-	SagaAdminHandler
+type adminHandler struct {
+	AdminHandler
 }
 
-func (h *sagaAdminHandler) PushMsg(ctx context.Context, in *PushMsgReq, out *PushMsgReply) error {
-	return h.SagaAdminHandler.PushMsg(ctx, in, out)
+func (h *adminHandler) PushMsg(ctx context.Context, in *PushMsgReq, out *PushMsgReply) error {
+	return h.AdminHandler.PushMsg(ctx, in, out)
+}
+
+func (h *adminHandler) TakeWorking(ctx context.Context, in *Request, out *Response) error {
+	return h.AdminHandler.TakeWorking(ctx, in, out)
+}
+
+// Client API for Action service
+
+type ActionService interface {
+	Action(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+}
+
+type actionService struct {
+	c    client.Client
+	name string
+}
+
+func NewActionService(name string, c client.Client) ActionService {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(name) == 0 {
+		name = "action"
+	}
+	return &actionService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *actionService) Action(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Action.Action", in)
+	out := new(Response)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Action service
+
+type ActionHandler interface {
+	Action(context.Context, *Request, *Response) error
+}
+
+func RegisterActionHandler(s server.Server, hdlr ActionHandler, opts ...server.HandlerOption) error {
+	type action interface {
+		Action(ctx context.Context, in *Request, out *Response) error
+	}
+	type Action struct {
+		action
+	}
+	h := &actionHandler{hdlr}
+	return s.Handle(s.NewHandler(&Action{h}, opts...))
+}
+
+type actionHandler struct {
+	ActionHandler
+}
+
+func (h *actionHandler) Action(ctx context.Context, in *Request, out *Response) error {
+	return h.ActionHandler.Action(ctx, in, out)
+}
+
+// Client API for Model service
+
+type ModelService interface {
+	Model(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error)
+}
+
+type modelService struct {
+	c    client.Client
+	name string
+}
+
+func NewModelService(name string, c client.Client) ModelService {
+	if c == nil {
+		c = client.NewClient()
+	}
+	if len(name) == 0 {
+		name = "model"
+	}
+	return &modelService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *modelService) Model(ctx context.Context, in *Request, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Model.Model", in)
+	out := new(Response)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Model service
+
+type ModelHandler interface {
+	Model(context.Context, *Request, *Response) error
+}
+
+func RegisterModelHandler(s server.Server, hdlr ModelHandler, opts ...server.HandlerOption) error {
+	type model interface {
+		Model(ctx context.Context, in *Request, out *Response) error
+	}
+	type Model struct {
+		model
+	}
+	h := &modelHandler{hdlr}
+	return s.Handle(s.NewHandler(&Model{h}, opts...))
+}
+
+type modelHandler struct {
+	ModelHandler
+}
+
+func (h *modelHandler) Model(ctx context.Context, in *Request, out *Response) error {
+	return h.ModelHandler.Model(ctx, in, out)
 }

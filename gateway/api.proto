@@ -13,10 +13,19 @@ message PushMsgReq {
 message PushMsgReply {
     string msg =1;
 }
-
-service SagaAdmin {
+message Request {
+    string username=1;
+}
+message Response {
+    string msg=1;
+}
+service Admin {
   rpc PushMsg(PushMsgReq) returns(PushMsgReply){
     option (google.api.http) = { post: "/v1/hello"
       body: "*" };
+  };
+  rpc TakeWorking(Request)returns(Response){
+  option (google.api.http) = { post: "/v2/hello"
+        body: "*" };
   }
 }
