@@ -1,5 +1,6 @@
 微服务测试用例
-
+# 目录说明
+```
 win-his
 │
 └───api          // micro**.proto
@@ -12,6 +13,7 @@ win-his
 │   │   vendor         // 第三方包管理
 │   │	README
 
+```
 这是一个micro 服务测试用例:
 一、编译*.proto,生成micro
 win-his/api/*.proto:
